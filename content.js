@@ -51,55 +51,49 @@ function getTexContent(expression, domain) {
   return null; // Return null if no content is found
 }
 
-// Function to set up event listeners for copying and tooltip display
+// Create a single tooltip element
+const tooltip = document.createElement("div");
+tooltip.className = "tooltip";
+tooltip.style.cssText = `
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(7px);
+  border: 1px solid #7b7b7b;
+  padding: 4px 6px;
+  z-index: 10;
+  white-space: nowrap;
+  border-radius: 5px;
+  font-size: 13px;
+  color: #d5d5d5;
+  display: none; // Initially hidden
+  pointer-events: none; // Prevent the tooltip from capturing mouse events
+`;
+document.body.appendChild(tooltip);
+
 function setupEventListeners(expression, tex) {
-  // Copy LaTeX to clipboard on click
   expression.addEventListener("click", function () {
     copyToClipboard(tex);
   });
 
-  // Show tooltip with LaTeX content on mouseover
   expression.addEventListener("mouseover", function () {
-    const tooltip = createTooltip(tex);
-    document.body.appendChild(tooltip);
+    // Update tooltip content
+    tooltip.innerHTML = tex;
 
-    // Position the tooltip above the expression
+    // Position the tooltip above the expression with more space
     const rect = expression.getBoundingClientRect();
-    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 5}px`;
+    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 40}px`; // Increased space to avoid overlap
     tooltip.style.left = `${rect.left}px`;
-    expression._tooltip = tooltip;
+
+    // Show the tooltip
+    tooltip.style.display = "block";
   });
 
-  // Remove tooltip on mouseout
   expression.addEventListener("mouseout", function () {
-    if (expression._tooltip) {
-      document.body.removeChild(expression._tooltip);
-      expression._tooltip = null;
-    }
+    // Hide the tooltip
+    tooltip.style.display = "none";
   });
 
-  // Change cursor to indicate copy action
   expression.style.cssText = "cursor:copy;";
-}
-
-// Function to create a styled tooltip element
-function createTooltip(tex) {
-  const tooltip = document.createElement("div");
-  tooltip.className = "tooltip";
-  tooltip.innerHTML = tex;
-  tooltip.style.cssText = `
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(7px);
-    border: 1px solid #7b7b7b;
-    padding: 4px 6px;
-    z-index: 10;
-    white-space: nowrap;
-    border-radius: 5px;
-    font-size: 13px;
-    color: #d5d5d5;
-  `;
-  return tooltip;
 }
 
 // Observe DOM changes to process new expressions dynamically
