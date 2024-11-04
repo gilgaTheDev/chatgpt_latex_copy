@@ -81,8 +81,12 @@ function setupEventListeners(expression, tex) {
 
     // Position the tooltip above the expression with more space
     const rect = expression.getBoundingClientRect();
-    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 40}px`; // Increased space to avoid overlap
-    tooltip.style.left = `${rect.left}px`;
+    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 40}px`; // Keep vertical position
+
+    // Center the tooltip horizontally
+    const tooltipWidth = tooltip.offsetWidth;
+    const expressionWidth = rect.width;
+    tooltip.style.left = `${rect.left + (expressionWidth / 2) - (tooltipWidth / 2)}px`;
 
     // Show the tooltip
     tooltip.style.display = "block";
